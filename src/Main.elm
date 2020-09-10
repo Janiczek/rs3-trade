@@ -16,6 +16,7 @@ import Table
 {- TODO ideas:
 
    * find all game shops and their prices vs GE prices
+   * quest related items as recipe products
 
 -}
 
@@ -144,11 +145,12 @@ main =
                                 |> Maybe.map List.sum
                             )
                     )
+                |> List.filter (\{ profit } -> profit > 0)
     in
     Html.div []
         [ Html.node "style" [] [ Html.text style ]
         , Html.div [ Attrs.class "recipes" ]
-            [ Html.h1 [] [ Html.text "Recipes" ]
+            [ Html.h1 [] [ Html.text "Profitable recipes for 100 most traded items" ]
             , Table.view recipeTableConfig recipeTableState tradeableRecipes
             ]
         , Html.div [ Attrs.class "items" ]
