@@ -52,6 +52,18 @@ recipeTableConfig =
                 , viewData = .materials
                 , sorter = Table.unsortable
                 }
+            , Table.customColumn
+                { name = "Theoretical max profit/h"
+                , viewData =
+                    \{ profitPerHour } ->
+                        case profitPerHour of
+                            Nothing ->
+                                ""
+
+                            Just profit ->
+                                String.fromInt profit
+                , sorter = Table.unsortable
+                }
             ]
         }
 
@@ -97,7 +109,13 @@ type alias RecipeWithPrice =
     , sellPrice : Float
     , buyPrice : Float
     , profit : Float
+    , profitPerHour : Maybe Int
     }
+
+
+ticksToSeconds : Int -> Float
+ticksToSeconds ticks =
+    toFloat ticks * 0.6
 
 
 main : Html ()
@@ -119,6 +137,9 @@ main =
                                 let
                                     sellPrice =
                                         toFloat productPrice * recipe.quantity
+
+                                    profit =
+                                        sellPrice - buyPrice
                                 in
                                 { product =
                                     String.fromFloat recipe.quantity
@@ -135,7 +156,14 @@ main =
                                             )
                                         |> String.join ", "
                                 , buyPrice = buyPrice
-                                , profit = sellPrice - buyPrice
+                                , profit = profit
+                                , profitPerHour =
+                                    case recipe.ticks of
+                                        Nothing ->
+                                            Nothing
+
+                                        Just ticks ->
+                                            Just <| round <| profit / ticksToSeconds ticks * 3600
                                 }
                             )
                             (Items.priceFor recipe.product)
@@ -166,6 +194,7 @@ style =
 td { padding: 0 8px; }
 
 .recipes td:nth-child(-n+3) { text-align: right; } 
+.recipes td:nth-child(6) { text-align: right; } 
 .items td:nth-child(-n+2) { text-align: right; }
 """
 

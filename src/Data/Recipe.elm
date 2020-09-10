@@ -5,6 +5,7 @@ type alias Recipe =
     { product : String
     , quantity : Float
     , materials : List Material
+    , ticks : Maybe Int
     }
 
 
